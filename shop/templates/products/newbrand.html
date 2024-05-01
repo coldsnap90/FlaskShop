@@ -1,0 +1,120 @@
+{% extends "layout.html" %}
+{% include 'admin/adminnav.html' %}
+{% block content %}
+
+
+
+
+<div class="container-fluid">
+  {% include 'messages.html' %}
+  {% if brands %}
+    
+    <div class="row text-center bg-info p-2 h4">
+      <div class ='col'>
+        {% if updatebrand %} 
+          Update 
+        {% else %}
+          Add a 
+        {% endif %} 
+          brand
+      </div>
+    </div>
+
+    <div class = 'row mt-5'>
+      <div class ='col text-center'>
+        
+        <form  method="post">
+          <div class="container-fluid">
+            <div class ='row'>
+              <div class="col">
+                {{form.hidden_tag()}}
+              </div>
+            </div>
+
+            {% if updatebrand %}
+              <div class ='row mt-3'>
+                <div class="col text-center">
+                  {{form.brand}}
+                </div>
+              </div>
+
+              <div class="row mt-5">
+                <div class="col text-center">
+                  {{form.submit(class="btn btn-info mt-3")}}
+                </div>
+              </div>
+
+            {% else %}
+              <div class ='row mt-5'>
+                <div class="col text-center">
+                  {{form.brand}}
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col text-center">
+                  {{form.submit(class="btn btn-info mt-3")}}
+                </div>
+              </form>
+            {% endif %}
+                        
+          </form>
+        </div>
+      </div>
+    </div>
+ 
+  {% else %}
+    <div class="row text-center bg-info p-2 h4">
+      <div class = 'col'>
+        {% if updatecat %}
+          Update 
+        {% else %}
+          Add a 
+        {% endif %}
+          category
+      </div>  
+    </div>   
+
+    <div class="row mt-5">
+      <div class="col">
+        <form action="" method="post">
+          <div class="container-fluid">
+            <div class ='row'>
+              <div class="col">
+                {{form.hidden_tag()}}
+              </div>
+            </div>
+
+            {% if updatecat %}
+              <div class ='row mt-3'>
+                <div class="col text-center">
+                  {{form.category}}
+                </div>
+              </div>
+
+              <div class="row mt-5">
+                <div class="col text-center">
+                  {{form.submit(class="btn btn-info mt-3")}}
+                </div>
+              </div>
+            {% else %}
+            <div class="row mt-3">
+              <div class="col text-center">
+                {{form.category}}
+              </div>
+            </div>
+
+            <div class="row mt-5">
+              <div class="col text-center">
+                {{form.submit(class="btn btn-info mt-3")}}
+              </div>
+            </div>
+            {% endif %} 
+          </div>  
+        </form>
+      </div>
+    </div>
+        
+  {% endif %}
+</div>
+{% endblock content %}

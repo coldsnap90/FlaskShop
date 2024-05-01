@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="bg-info text-center">Register</h1>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <form method="post" >
+        {{ form.hidden_tag() }}
+        <div class="row">
+         
+            <div class="col-md-4">
+                {{form.firstname.label}}
+                <br>
+                {{ form.firstname}}
+                <br>
+                {{form.username.label}}
+                <br>
+                {{ form.username}}
+                <br>
+                {{form.email.label}}
+                <br>
+                {{ form.email}}
+                <br>
+                {{form.password.label}}
+                <br>
+                {{ form.password}}
+                <br>
+                {{form.confirm.label}}
+                <br>
+                {{ form.confirm }}
+                <br>
+                {{form.profile.label}}
+                <br>
+                {{ form.profile }}
+            </div>
+            <div class="col-md-4">
+                <br>
+                {{form.country.label}}
+                <br>
+                {{ form.country}}
+                <br>
+                <br>
+                {{form.province.label}}
+                <br>
+                {{ form.province}}
+                <br>
+
+                {{form.city.label}}
+                <br>
+                {{ form.city}}
+                <br>
+                {{form.contact.label}}
+                <br>
+                {{ form.contact}}
+                <br>
+                {{form.address.label}}
+                <br>
+                {{ form.address}}
+                <br>
+                {{form.postalcode.label}}
+                <br>
+                {{ form.postalcode}}
+                <br>
+                {{ form.submit }}
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock content %}

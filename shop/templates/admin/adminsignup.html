@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block content %}
+<form method="post">
+    <div class="container-fluid mt-3">
+        <div class="row">
+            <div class="col text-center">
+                <div class="text-center bg-info p-2 h4">Admin Registration</div>
+            </div>
+        </div>
+        
+        <div class ='row mt-3'>
+
+            <div class='col'>
+                {{ form.hidden_tag()}}
+            </div>
+        </div>
+        <div class ='row'>
+            <div class='col'>
+                        {{form.firstname.label}}
+                        <br>
+                        {{form.firstname }}
+            </div>
+        </div>
+        <div class ='row mt-3'>
+            <div class="col">
+                        {{form.username.label}}
+                        <br>
+                        {{form.username}}
+            </div>
+        </div>
+        <div class ='row mt-3'>
+            <div class='col'>
+                        {{form.email.label}}
+                        <br>
+                        {{form.email}}
+            </div>
+        </div>
+        <div class ='row mt-3'>
+            <div class ='col'>
+                        {{form.password.label}}
+                        <br>
+                        {{form.password}}
+            </div>
+        </div>
+        <div class ='row mt-3'>
+            <div class="col">
+                        {{form.confirm.label}}
+                        <br>
+                        {{form.confirm}}
+            </div>
+        </div>
+
+        <div class = 'row mt-3'>
+            <div class="col text-center">
+                        {{form.submit}}
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock content %}
