@@ -23,8 +23,10 @@ class Addproduct(db.Model):
     image_2 = db.Column(db.String(150), nullable=False, default='image2.jpg')
     image_3 = db.Column(db.String(150), nullable=False, default='image3.jpg')
 
+
     def __repr__(self):
-        return '<Post %r>' % self.name
+        return f"Product({self.name},{self.price},{self.discount},{self.stock},{self.colors},\
+                         {self.desc},{self.pub_date},{self.category},{self.brand},{self.image_1},{self.image_2},{self.image_3})"
 
 
 class Brand(db.Model):
@@ -34,7 +36,7 @@ class Brand(db.Model):
     def __init__(self,name):
         self.name = name
     def __repr__(self):
-        return '<Brand %r>' % self.name
+        return f"Brand({self.name})"
     
 
 class Category(db.Model):
@@ -45,6 +47,6 @@ class Category(db.Model):
         self.name = name
 
     def __repr__(self):
-        return '<Catgory %r>' % self.name
+        return f"Category({self.name})"
 
 

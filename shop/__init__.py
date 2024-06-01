@@ -1,6 +1,6 @@
 from flask import Flask
 from .config import Config
-from .extensions import db,bcrypt,mail,moment,migrate,admin,login_manager,csrf,cache,photos,search
+from .extensions import db,bcrypt,mail,moment,migrate,admin,login_manager,cache,photos,search,csrf
 from flask_uploads import configure_uploads
 import os
 
@@ -12,9 +12,11 @@ def create_app(config_class=Config):
     basedir = os.path.abspath(os.path.dirname(__file__))
     app = Flask(__name__)
     app.config.from_object(Config)
+
     app.config["UPLOADED_PHOTOS_DEST"] = os.path.join(basedir,"static/images")
     with app.app_context():
-        csrf.init_app(app)
+      
+    
         db.init_app(app)
         login_manager.login_view = 'auth.login'
         login_manager.init_app(app)
@@ -25,6 +27,7 @@ def create_app(config_class=Config):
         migrate.init_app(app,db, render_as_batch=True)
         search.init_app(app)
         cache.init_app(app)
+        csrf.init_app(app)
         configure_uploads(app, photos)
  
         

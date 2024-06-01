@@ -11,6 +11,7 @@ class RegisteredUser(db.Model, UserMixin):
     __tablename__ = 'registeredusers'
     id = db.Column(db.Integer, primary_key= True)
     firstname = db.Column(db.String(50), unique= False)
+    lastname = db.Column(db.String(50), unique= False)
     username = db.Column(db.String(50), unique= True)
     email = db.Column(db.String(50), unique= True)
     password = db.Column(db.String(200), unique= False)
@@ -23,9 +24,10 @@ class RegisteredUser(db.Model, UserMixin):
     profile = db.Column(db.String(128), unique=False, default='profile.jpg')
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
-    def __init__(self,firstname,username,email,password,country,province,
+    def __init__(self,firstname,lastname,username,email,password,country,province,
                  city,contact,address,postalcode):
         self.firstname = firstname
+        self.lastname = lastname
         self.username = username
         self.email = email
         self.password = password
@@ -39,8 +41,8 @@ class RegisteredUser(db.Model, UserMixin):
      
 
     def __repr__(self):
-        return f'{self.firstname},{self.username},{self.email},{self.password},{self.country},{self.province},{self.city}.{self.contact},{self.address}\
-                ,{self.postalcode},{self.date_created}'
+        return f'''Registered-User({self.firstname},{self.lastname},{self.username},{self.email},{self.password},{self.country},{self.province},
+                 {self.city}.{self.contact},{self.address},{self.postalcode},{self.date_created})'''
 
 
 class JsonEcodedDict(db.TypeDecorator):
@@ -65,4 +67,4 @@ class CustomerOrder(db.Model):
     orders = db.Column(JsonEcodedDict)
 
     def __repr__(self):
-        return'<CustomerOrder %r>' % self.invoice
+        return f"Customer-Order({self.invoice},{self.status},{self.customer_id},{self.date_created},{self.orders})"

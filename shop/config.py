@@ -1,12 +1,11 @@
+import os
 from dotenv import load_dotenv
 load_dotenv()
-import os
-
-
 
 
 class Config:
-    env = 'dev'
+
+    env = 'test'
     ADMIN_PASS = os.environ.get('ENV_ADMIN_PASS')
     CSRF_ENABLED = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False  
@@ -16,6 +15,15 @@ class Config:
         ADMIN_PASS = os.environ.get('ADMIN_PASS')
         SQLALCHEMY_DATABASE_URI = os.environ.get('ENV_DATABASE_CONNECT')
         SERVER_NAME = "127.0.0.1:5000"
+        
+    elif env =='test':
+        LOGIN_DISABLED = True
+        ADMIN_PASS = os.environ.get('ADMIN_PASS')
+        WTF_CSRF_ENABLED = False
+        CSRF_ENABLED = False
+        SQLALCHEMY_DATABASE_URI = os.environ.get("ENV_LOCAL_DB")
+        SERVER_NAME = "127.0.0.1:5000"
+
     else:
         ADMIN_PASS = os.environ.get('ADMIN_PASS')
         SQLALCHEMY_DATABASE_URI = os.environ.get("ENV_LOCAL_DB")
@@ -30,6 +38,7 @@ class Config:
     MAIL_PASSWORD = os.environ.get("ENV_MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER = 'Campsite.booking.service@gmail.com'
     MAIL_MAX_EMAILS = 1
+    SESSION_COOKIE_SECURE = False
     SESSION_COOKIE_SAMESITE='Lax'
     CACHE_TYPE = 'SimpleCache'
 
@@ -38,5 +47,4 @@ class Config:
     #secure cookies
     #SESSION_COOKIE_SECURE=True
     #SESSION_COOKIE_HTTPONLY=True
-   
 

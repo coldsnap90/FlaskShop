@@ -9,8 +9,10 @@ from .models import RegisteredUser
 
 
 class CustomerRegisterForm(FlaskForm):
-    firstname = StringField('Name: ')
+    firstname = StringField('First Name: ')
+    lastname = StringField('Last Name: ') 
     username = StringField('Username: ', validators = [DataRequired()])
+
     email = StringField('Email: ', validators = [Email(), DataRequired()])
     password = PasswordField('Password: ', validators =[DataRequired(), EqualTo('confirm', message=' Both password must match! ')])
     confirm = PasswordField('Repeat Password: ', validators =[DataRequired(), EqualTo('confirm', message=' Both password must match! ')])

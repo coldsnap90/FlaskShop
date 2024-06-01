@@ -7,8 +7,8 @@
                 <div class="text-center bg-info p-2 h4">Login</div>
                 {% from "errors.html" import render_field %}
                 {% include 'messages.html' %}
-                <form method=post>
-                    {{form.csrf_token}}
+                <form action ='' method= 'post'>
+                    {{form.hidden_tag()}}
                 <div>
                     {{form.email.label}}
                     {{form.email}}
