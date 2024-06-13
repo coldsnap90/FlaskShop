@@ -1,7 +1,7 @@
 from shop.extensions import bcrypt,db,mail,cache
 from shop.cart import cart
 from flask import redirect, render_template, session, url_for, flash, request
-from flask_login import login_required, current_user, logout_user, login_user
+from flask_login import login_required, current_user
 from shop.products.models import Addproduct
 from shop.products.routes import brands, categories
 
@@ -21,7 +21,6 @@ def merge_dict(dict1, dict2):
 @login_required
 def add_cart():
     
-    print('addcart')
     try:
         product_id = request.form.get('product_id')
         quantity = request.form.get('quantity')

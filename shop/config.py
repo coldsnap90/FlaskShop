@@ -5,15 +5,15 @@ load_dotenv()
 
 class Config:
 
-    env = 'test'
+    env = 'dev'
     ADMIN_PASS = os.environ.get('ENV_ADMIN_PASS')
-    CSRF_ENABLED = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False  
     SCHEDULER_API_ENABLED = True  
 
     if env == 'dev':
         ADMIN_PASS = os.environ.get('ADMIN_PASS')
         SQLALCHEMY_DATABASE_URI = os.environ.get('ENV_DATABASE_CONNECT')
+        WTF_CSRF_ENABLED = True
         SERVER_NAME = "127.0.0.1:5000"
         
     elif env =='test':
@@ -41,9 +41,6 @@ class Config:
     SESSION_COOKIE_SECURE = False
     SESSION_COOKIE_SAMESITE='Lax'
     CACHE_TYPE = 'SimpleCache'
-
-
- 
     #secure cookies
     #SESSION_COOKIE_SECURE=True
     #SESSION_COOKIE_HTTPONLY=True

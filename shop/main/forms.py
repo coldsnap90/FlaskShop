@@ -2,7 +2,8 @@ from wtforms import StringField, TextAreaField, PasswordField,SubmitField,valida
 from flask_wtf.file import FileRequired,FileAllowed, FileField
 from wtforms.validators import DataRequired, Length, Email,EqualTo,NumberRange,InputRequired
 from flask_wtf import FlaskForm
-from .models import RegisteredUser
+from shop.auth.models import User
+
 
 
 
@@ -12,7 +13,6 @@ class CustomerRegisterForm(FlaskForm):
     firstname = StringField('First Name: ')
     lastname = StringField('Last Name: ') 
     username = StringField('Username: ', validators = [DataRequired()])
-
     email = StringField('Email: ', validators = [Email(), DataRequired()])
     password = PasswordField('Password: ', validators =[DataRequired(), EqualTo('confirm', message=' Both password must match! ')])
     confirm = PasswordField('Repeat Password: ', validators =[DataRequired(), EqualTo('confirm', message=' Both password must match! ')])
@@ -27,11 +27,11 @@ class CustomerRegisterForm(FlaskForm):
 
 
     def validate_username(self, username):
-        if RegisteredUser.query.filter_by(username=username).first():
+        if User.query.filter_by(username=username).first():
             raise ValidationError("This username is already in use!")
         
     def validate_email(self, email):
-        if RegisteredUser.query.filter_by(email=email).first():
+        if User.query.filter_by(email=email).first():
             raise ValidationError("This email address is already in use!")
         
 

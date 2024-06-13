@@ -1,14 +1,17 @@
-from flask import render_template,session, request,redirect,url_for,flash
+from flask import render_template,redirect,url_for,flash
 from shop.extensions import bcrypt,db,mail,cache,login_manager
 from flask_login import login_user, current_user, logout_user, login_required
 from shop.auth import auth
 from .forms import RegistrationForm,LoginForm
-from .models import User
+from shop.auth.models import load_user,User
 from shop.products.models import Addproduct,Category,Brand
 import time
 import psycopg2
 import os
 from psycopg2.extras import RealDictCursor
+
+
+
 
 def get_db_connect():
 
@@ -21,11 +24,15 @@ def get_db_connect():
             print('Connecting to DB failed')
         time.sleep(2)
 
+@login_manager.unauthorized_handler
+def unauthorized_handler():
+
+    return 'Unauthorized', 401
 
 @auth.route('/admin')
 @login_required
 def admin():
-   
+
     admin = User.query.filter_by(id=User.get_id(current_user)).first()
     if admin.is_admin:
         products = Addproduct.query.all()
@@ -60,7 +67,6 @@ def register():
     form = RegistrationForm()
 
     if form.validate_on_submit():
-
         hash_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         print(hash_password)
         user = User(firstname=form.firstname.data,lastname=form.lastname.data,username=form.username.data, email=form.email.data,
@@ -72,7 +78,7 @@ def register():
 
         return redirect(url_for('auth.login'))
     else:
-        print('FAIL ',form.errors)
+        print('error :  ',form.errors)
     return render_template('admin/adminsignup.html',title='Register user', form=form)
 
 
@@ -82,18 +88,19 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        print(user.password,form.password.data)
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-   
-            flash(f'welcome {user.email} you are logedin now','success')
-            login_user(user,remember=True)
-       
+        
+        if user.is_admin and bcrypt.check_password_hash(user.password, form.password.data):
+            print((user.password, form.password.data))
+            flash(f'welcome {user.email} you are logged in now','success')
+            login_user(user)
             return redirect(url_for('auth.admin'))
+        
         else:
             print('form not validated, errors: ',form.errors)
             flash(f'Wrong email and password', 'success')
             return redirect(url_for('auth.login'))
     return render_template('admin/adminlogin.html',title='Login page',form=form)
+
 
 @auth.route('/logout', methods=['GET','POST'])
 @login_required
@@ -102,17 +109,4 @@ def logout():
 
     if admin.is_admin:
         logout_user()
-    return redirect(url_for('auth.login'))
-
-@cache.cached(timeout = 500,key_prefix='get_cached_admin')
-def get_cached_admin(admin_id):
-
-    admin = cache.get(admin_id)
-
-    if admin:
-        return admin
-    
-    else:
-        brand = User.query.get_or_404(admin_id)
-        cache.set(admin_id, admin)
-        return admin
+    return redirect(url_for('main.index'))

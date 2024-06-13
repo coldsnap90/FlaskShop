@@ -3,3 +3,7 @@
     text-align: right;
     height: 15vh;
 }
+
+#header{
+    border-bottom: 2px solid #212529;
+}

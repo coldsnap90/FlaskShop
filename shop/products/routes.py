@@ -1,13 +1,16 @@
 from flask import render_template,session, request,redirect,url_for,flash,current_app
 from shop import db,photos
 from shop.products import product
-from shop.auth.models import User
-from shop.extensions import bcrypt,db,mail,cache
+from shop.auth.models import User,load_user
+from shop.extensions import db,cache
 from .models import Category,Brand,Addproduct
 from .forms import AddproductsForm,AddbrandForm,AddCategoryForm
-from flask_login import login_required, current_user, logout_user, login_user
+from flask_login import login_required, current_user
 import secrets
 import os
+from flask import g, session
+
+
 
 
 def brands():
@@ -76,7 +79,6 @@ def get_category(id):
 def add_brand():
 
     admin = User.query.filter_by(id=User.get_id(current_user)).first()
-    print(admin)
     if admin.is_admin == False:
         return redirect(url_for('auth.login'))
 
@@ -98,7 +100,6 @@ def add_brand():
 def update_brand(id):
 
     admin = User.query.filter_by(id=User.get_id(current_user)).first()
-    print(admin)
     if admin.is_admin == False:
         return redirect(url_for('auth.login'))
 
@@ -125,7 +126,6 @@ def update_brand(id):
 def delete_brand(id):
 
     admin = User.query.filter_by(id=User.get_id(current_user)).first()
-    print(admin)
     if admin.is_admin == False:
         return redirect(url_for('auth.login'))
 
@@ -146,7 +146,6 @@ def delete_brand(id):
 def add_category():
 
     admin = User.query.filter_by(id=User.get_id(current_user)).first()
-    print(admin)
     if admin.is_admin == False:
         return redirect(url_for('auth.login'))
 
@@ -167,7 +166,7 @@ def add_category():
 def update_category(id):
 
     admin = User.query.filter_by(id=User.get_id(current_user)).first()
-    print(admin)
+
     if admin.is_admin == False:
         return redirect(url_for('auth.login'))
 
@@ -196,7 +195,7 @@ def update_category(id):
 def delete_category(id):
 
     admin = User.query.filter_by(id=User.get_id(current_user)).first()
-    print(admin)
+
     if admin.is_admin == False:
         return redirect(url_for('auth.login'))
 
@@ -213,15 +212,14 @@ def delete_category(id):
 
 
 @product.route('/addproduct', methods=['GET','POST'])
+@login_required
 def add_product():
-    try:
-        admin = User.query.filter_by(id=User.get_id(current_user)).first()
-        print(admin)
-        if admin.is_admin == False:
-            return redirect(url_for('auth.login'))
-    except:
-        print('fail')
 
+
+    admin = User.query.filter_by(id=User.get_id(current_user)).first()
+    if admin.is_admin == False:
+            return redirect(url_for('auth.login'))
+ 
     form = AddproductsForm()
     brands = Brand.query.all()
     categories = Category.query.all()
@@ -269,7 +267,6 @@ def add_product():
 def update_product(id):
 
     admin = User.query.filter_by(id=User.get_id(current_user)).first()
-    print(admin)
     if admin.is_admin == False:
         return redirect(url_for('auth.login'))
 
@@ -365,6 +362,7 @@ def get_cached_brand(brand_id):
         cache.set(brand_id, brand)
         return brand
 
+
 @cache.cached(timeout = 50,key_prefix='get_cached_product')
 def get_cached_product(product_id):
 
@@ -377,6 +375,7 @@ def get_cached_product(product_id):
         product = Addproduct.query.get_or_404(product_id)
         cache.set(product_id, product)
         return product
+
 
 @cache.cached(timeout = 50,key_prefix='get_cached_category')
 def get_cached_category(cat_id):

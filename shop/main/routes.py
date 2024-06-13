@@ -1,14 +1,20 @@
-from shop.extensions import bcrypt,db,mail,cache
+from shop.extensions import bcrypt,db
 from shop.main import main
+from shop.auth.models import User
 from flask import render_template,session, request,redirect,url_for,flash,current_app,make_response
 from flask_login import login_required, current_user, logout_user, login_user
 from .forms import CustomerRegisterForm, CustomerLoginForm, testForm
-from .models import RegisteredUser,CustomerOrder
+from .models import CustomerOrder
 import stripe
 import secrets
 import pdfkit # type: ignore
 from shop.products.routes import brands, categories
 from flask_wtf.csrf import CSRFError
+import os
+from dotenv import load_dotenv
+load_dotenv()
+stripe.api_key = os.environ.get('ENV_API_KEY')
+
 
 @main.errorhandler(CSRFError)
 def handle_csrf_error(e):
@@ -16,7 +22,23 @@ def handle_csrf_error(e):
     return render_template('csrf_error.html', reason=e.description), 400
 
 
-stripe.api_key ='sk_test_51LkJFTH3k8WZ4arf1cn55YJ09jFIO9KcdJN0MUjPLuPf6VZQAWTCH2acdjeBqd0DvSaoQFnJaEIs2Z6cfOeCWzoe00d4geyCBm'
+@main.route('/admin',methods=['GET','POST'])
+def admin():
+
+    if current_user.is_anonymous:
+        return redirect('auth.login')
+    
+    users = User.query.filter(id=User.get_id()).first()
+    if users.is_admin:
+        return render_template('admin/index.html')
+    
+    else:
+        return redirect('auth.login')
+
+@main.route('/',methods=['GET','POST'])
+def index():
+
+    return render_template('index.html')
 
 @main.route('/payment',methods=['POST'])
 @login_required
@@ -51,13 +73,16 @@ def customer_register():
 
     form = CustomerRegisterForm()
 
-    if form.is_submitted():
-        user = RegisteredUser(firstname= form.firstname.data,lastname = form.lastname.data,username=form.username.data, email=form.email.data,
-                        password=form.password.data ,country = form.country.data,province=form.province.data,
+    if form.validate_on_submit():
+        
+        hash_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+
+        user = User(firstname= form.firstname.data,lastname = form.lastname.data,username=form.username.data, email=form.email.data,
+                        password=hash_password ,is_admin=False,country = form.country.data,province=form.province.data,
                     city=form.city.data,contact=form.contact.data,address=form.address.data,postalcode=form.postalcode.data)
         db.session.add(user)
         db.session.commit()
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('login'))
     
     return render_template('customers/signup.html', form=form)
 
@@ -67,9 +92,9 @@ def customer_register():
 def customer_login():
 
     form = CustomerLoginForm()
-    user = RegisteredUser.query.all()
+    user = User.query.all()
     if form.validate_on_submit():
-        user = RegisteredUser.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(email=form.email.data).first()
         
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user)
@@ -129,7 +154,7 @@ def orders(invoice):
         grandTotal = 0
         subTotal = 0
         customer_id = current_user.id
-        customer = RegisteredUser.query.filter_by(id=customer_id).first()
+        customer = User.query.filter_by(id=customer_id).first()
         orders = CustomerOrder.query.filter_by(customer_id=customer_id, invoice=invoice).order_by(CustomerOrder.id.desc()).first()
         for _key, product in orders.orders.items():
             discount = (product['discount']/100) * float(product['price'])
@@ -145,8 +170,6 @@ def orders(invoice):
                            customer=customer,orders=orders,brands=brands(),categories=categories())
 
 
-
-
 @main.route('/get_pdf/<invoice>', methods=['POST'])
 @login_required
 def get_pdf(invoice):
@@ -157,7 +180,7 @@ def get_pdf(invoice):
         customer_id = current_user.id
 
         if request.method =="POST":
-            customer = RegisteredUser.query.filter_by(id=customer_id).first()
+            customer = User.query.filter_by(id=customer_id).first()
             orders = CustomerOrder.query.filter_by(customer_id=customer_id, invoice=invoice).order_by(CustomerOrder.id.desc()).first()
             for _key, product in orders.orders.items():
                 discount = (product['discount']/100) * float(product['price'])

@@ -2,6 +2,7 @@ from flask import Flask
 from .config import Config
 from .extensions import db,bcrypt,mail,moment,migrate,admin,login_manager,cache,photos,search,csrf
 from flask_uploads import configure_uploads
+
 import os
 
 
